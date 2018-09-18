@@ -1,0 +1,8 @@
+{
+	"sites": [{
+		"name": "pfs",
+		"publicJavascript": "pfs_front_end",
+		"cartridges": ["./pfs_front_end"]
+	}],
+	"url": "dev02-web-torrid.demandware.net"
+}

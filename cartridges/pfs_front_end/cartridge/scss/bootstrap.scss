@@ -1,0 +1,67 @@
+@import "../static/default/lib/bootstrap/scss/functions";
+@import "../static/default/lib/bootstrap/scss/variables";
+@import "variables";
+
+//overwrite gutter width
+$grid-gutter-width: $gutter-width;
+
+//overwrite breakpoints
+$grid-breakpoints: (
+  xxs: $breakpoint-xxs-min,
+  xs: $breakpoint-xs-min,
+  sm: $breakpoint-sm-min,
+  md: $breakpoint-md-min,
+  lg: $breakpoint-lg-min,
+  xl: $breakpoint-xl-min
+);
+ 
+//overwrite max-widths
+$container-max-widths: (
+  xxs: $breakpoint-xxs-max,
+  xs: $breakpoint-xs-max,
+  sm: $breakpoint-sm-max,
+  md: $breakpoint-md-max,
+  lg: $breakpoint-lg-max,
+  xl: $breakpoint-xl-max
+);
+
+@import "../static/default/lib/bootstrap/scss/mixins";
+@import "../static/default/lib/bootstrap/scss/root";
+@import "../static/default/lib/bootstrap/scss/reboot";
+
+//Overwriting bootstrap default style in reboot.scss that was set to "bolder" which 
+// does not work with Montserrat font
+b, strong {
+  font-weight: 600;
+}
+
+@import "../static/default/lib/bootstrap/scss/type";
+@import "../static/default/lib/bootstrap/scss/images";
+@import "../static/default/lib/bootstrap/scss/code";
+@import "../static/default/lib/bootstrap/scss/grid";
+@import "../static/default/lib/bootstrap/scss/tables";
+@import "../static/default/lib/bootstrap/scss/forms";
+@import "../static/default/lib/bootstrap/scss/buttons";
+@import "../static/default/lib/bootstrap/scss/transitions";
+@import "../static/default/lib/bootstrap/scss/dropdown";
+@import "../static/default/lib/bootstrap/scss/button-group";
+@import "../static/default/lib/bootstrap/scss/input-group";
+@import "../static/default/lib/bootstrap/scss/custom-forms";
+@import "../static/default/lib/bootstrap/scss/nav";
+@import "../static/default/lib/bootstrap/scss/navbar";
+@import "../static/default/lib/bootstrap/scss/card";
+@import "../static/default/lib/bootstrap/scss/breadcrumb";
+@import "../static/default/lib/bootstrap/scss/pagination";
+@import "../static/default/lib/bootstrap/scss/badge";
+@import "../static/default/lib/bootstrap/scss/jumbotron";
+@import "../static/default/lib/bootstrap/scss/alert";
+@import "../static/default/lib/bootstrap/scss/progress";
+@import "../static/default/lib/bootstrap/scss/media";
+@import "../static/default/lib/bootstrap/scss/list-group";
+@import "../static/default/lib/bootstrap/scss/close";
+@import "../static/default/lib/bootstrap/scss/modal";
+@import "../static/default/lib/bootstrap/scss/tooltip";
+@import "../static/default/lib/bootstrap/scss/popover";
+@import "../static/default/lib/bootstrap/scss/carousel";
+@import "../static/default/lib/bootstrap/scss/utilities";
+@import "../static/default/lib/bootstrap/scss/print";

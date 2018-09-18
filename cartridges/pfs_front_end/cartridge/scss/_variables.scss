@@ -1,0 +1,28 @@
+$gutter-width: 0;           //bootstrap gutter width
+$container-max: 1440px;     //max container size
+
+//viewport breakpoints
+$breakpoint-xxs-min: 0;     //Not Supported on most sites
+$breakpoint-xxs-max: 319px; //Not Supported on most sites
+
+$breakpoint-xs-min: 320px;  //small mobile min
+$breakpoint-xs-max: 576px;  //small mobile max
+
+$breakpoint-sm-min: 577px;  //large mobile min
+$breakpoint-sm-max: 767px;  //large mobile max
+  
+$breakpoint-md-min: 768px;  //tablet min
+$breakpoint-md-max: 1060px; //tablet max
+
+$breakpoint-lg-min: 1061px; //small desktop min
+$breakpoint-lg-max: 1200px; //small desktop max
+
+$breakpoint-xl-min: 1201px; //large desktop min
+$breakpoint-xl-max: 1440px; //large desktop max
+
+//media Queries
+$breakpoint-xs: "(max-width: #{$breakpoint-xs-max})";
+$breakpoint-sm: "(max-width: #{$breakpoint-sm-max})";
+$breakpoint-md: "(max-width: #{$breakpoint-md-max})";
+$breakpoint-lg: "(max-width: #{$breakpoint-lg-max})";
+$breakpoint-xl: "(max-width: #{$breakpoint-xl-max})";

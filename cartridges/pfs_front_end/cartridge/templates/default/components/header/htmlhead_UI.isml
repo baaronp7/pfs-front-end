@@ -1,0 +1,17 @@
+<iscomment>used to turn off mification during development (DO NOT REMOVE)</iscomment>
+<isset name="disableMinify" value="${!empty(dw.system.Site.getCurrent().getCustomPreferenceValue('disableMinify')) ? dw.system.Site.getCurrent().getCustomPreferenceValue('disableMinify') : false}" scope="page"/>
+
+<!--  bootstrap css -->
+<isif condition="${disableMinify}">
+	<link rel="stylesheet" href="${URLUtils.httpsStatic('/lib/bootsrap/dist/css/bootstrap.css')}"/>
+<iselse>
+	<link rel="stylesheet" href="${URLUtils.httpsStatic('/lib/bootsrap/dist/css/bootstrap.min.css')}"/>
+</isif>
+
+
+<!-- UI -->
+<isif condition="${disableMinify}">
+	<link rel="stylesheet" href="${URLUtils.httpsStatic('/css/style.css')}"/>
+<iselse>
+	<link rel="stylesheet" href="${URLUtils.httpsStatic('/css/style.min.css')}"/>
+</isif>
