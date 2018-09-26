@@ -1,1 +1,5 @@
 node_modules
+reports
+cartridges/pfs_front_end/cartridge/static/default/css/*
+cartridges/pfs_front_end/cartridge/static/default/images/*
+cartridges/pfs_front_end/cartridge/static/default/js/*

@@ -1,6 +1,6 @@
 // Include the different modules to be used throughout the program 
 var gulp = require('gulp'),
-	sass = require('gulp-sass'),clea
+	sass = require('gulp-sass'),
 	prefix = require('gulp-autoprefixer'),
 	rename = require('gulp-rename'),
 	jeditor = require("gulp-json-editor"),
@@ -14,17 +14,34 @@ var gulp = require('gulp'),
 	notify = require('gulp-notify'),
 	buffer = require('vinyl-buffer'),
 	browserify = require('gulp-browserify'),
-	debug = require('gulp-debug');
+	plumber = require('gulp-plumber'),
+	changed = require('gulp-changed'),
+	imagemin = require('gulp-imagemin'),
+	debug = require('gulp-debug'),
+	svgSprite = require('gulp-svg-sprite'),
+	path = require('path'),
+	glob = require('glob'),
+	size = require('gulp-size');
 
 // Transpile ES6 => ES5
 const babel = require('gulp-babel');
+
+const plumberErrorHandler = {
+	errorHandler: notify.onError({
+	  title: 'Gulp',
+	  message: 'Error: <%= error.message %>'
+	})
+};
 
 const paths = {
 	scripts: './cartridges/pfs_front_end/cartridge/js/**/*.js',
 	scriptsCompile: './cartridges/pfs_front_end/cartridge/js/*.js',
 	jsOutput: './cartridges/pfs_front_end/cartridge/static/default/js',
-	styles: './cartridges/pfs_front_end/cartridge/scss/**/*.scss',
-	cssOutput: './cartridges/pfs_front_end/cartridge/static/default/css'
+	styles: './cartridges/pfs_front_end/cartridge/scss/*.scss',
+	cssOutput: './cartridges/pfs_front_end/cartridge/static/default/css',
+	images: './cartridges/pfs_front_end/cartridge/images/*.{jpg,jpeg,png,gif,svg}',
+	imagesOutput: './cartridges/pfs_front_end/cartridge/static/default/images',
+	svg: './cartridges/pfs_front_end/cartridge/svgs'
 };
 
 gulp.task('help', function () {
@@ -103,7 +120,12 @@ gulp.task('copy-plugins', function () {
 
 
 gulp.task('sass', function () {
-	return gulp.src(paths.styles)
+	var pathsArry = [paths.styles];
+	var isBootstrap = (config.bootstrap === 'true');
+	if(isBootstrap) {
+		pathsArry.push('./cartridges/pfs_front_end/cartridge/scss/bootstrap/*.scss');
+	}
+	return gulp.src(pathsArry)
 		.pipe(sourcemaps.init())
 		.pipe(sass().on('error', sass.logError))
 		.pipe(prefix('last 5 versions'))
@@ -178,11 +200,11 @@ gulp.task('images', () => {
 	return gulp
 		.src(paths.images)
 		.pipe(plumber(plumberErrorHandler))
-		.pipe(changed(paths.theme_assets)) // Ignore unchanged files
+		.pipe(changed(paths.imagesOutput)) // Ignore unchanged files
 		.pipe(imagemin({
 			optimizationLevel: 5
 		})) // Optimize
-		.pipe(gulp.dest(paths.theme_assets))
+		.pipe(gulp.dest(paths.imagesOutput))
 		.pipe(notify({
 			message: 'Images task complete'
 		}));
@@ -208,6 +230,32 @@ gulp.task('build-sprite', () => {
 		.pipe(gulp.dest('./theme/snippets'));
 });
 
+gulp.task('svg', function () {
+	var svgDest = paths.imagesOutput;
+   
+	function makeSvgSpriteOptions(dirPath) {
+	  return {
+		mode: {
+		  symbol: {
+			dest: '.',
+			example: true,
+			sprite: 'main.svg'
+		  },
+		}
+	  };
+	}
+   
+	return glob(paths.svg, function (err, dirs) {
+	  dirs.forEach(function (dir) {
+		gulp.src(path.join(dir, '*.svg'))
+		  .pipe(svgSprite(makeSvgSpriteOptions(dir)))
+		  .pipe(size({showFiles: true, title: svgDest}))
+		  .pipe(gulp.dest(svgDest))
+	  })
+	}); 
+	
+   });
+
 // Run the style tasks
 gulp.task('styles', ['minify']);
 
@@ -215,14 +263,11 @@ gulp.task('styles', ['minify']);
 gulp.task('js', ['scripts']);
 
 // Run all tasks without deploy
-gulp.task('default', ['styles', 'js']);
+gulp.task('default', ['styles', 'js', 'images', 'svg']);
 
 gulp.task('watch', ['default'], function () {
-	if (argv.project) {
-		var path = workingPath + '/../' + argv.project + '/cartridge/';
-	} else {
-		var path = workingPath + '/../**/cartridge/';
-	}
-	gulp.watch(path + 'scss/**/*.scss', ['styles']);
-	gulp.watch(path + 'js/**/*.js', ['js']);
+	gulp.watch(paths.styles, ['styles']);
+	gulp.watch(paths.scripts, ['js']);
+	gulp.watch(paths.images, ['images']);
+	gulp.watch(paths.svg, ['svg']);
 })

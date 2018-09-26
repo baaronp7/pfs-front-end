@@ -89,18 +89,7 @@ The gulpscript compiles 'cartridges/pfs_front_end/cartridge/scss/bootstrap.scss'
 
 ## Images Optimization
 
-First we should deal with the file size of the image itself. Although Shopify stores multiple (dimensional) sizes of the image, we should handle the initial optimization step locally, before the upload occurs. To accomplish this, we're using the [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) package, and have configured it to run whenever an image is added to the `lib/images` directory.
-
-```js
-gulp.task('images', () => {
-  return gulp.src(paths.images)
-    .pipe(plumber(plumberErrorHandler))
-    .pipe(changed(paths.theme_assets))      // Ignore unchanged files
-    .pipe(imagemin({optimizationLevel: 5})) // Optimize
-    .pipe(gulp.dest(paths.theme_assets))
-    .pipe(notify({ message: 'Images task complete' }));
-});
-```
+Image file sizes can greatly increase the load time of a site. For preformance reasons we want to optimize images reduce their file sizes. We do this using the [gulp-imagemin](https://www.npmjs.com/package/gulp-imagemin) package, and have configured it to run when you run `gulp watch` and when an image is added to the `cartriges/pfs_front_end/cartridge/images` directory it will opimize and move the images to `cartriges/pfs_front_end/cartridge/static/defaul/images`.
 
 We're off to a good start, but are not done yet. The last step is to serve an *appropriately sized* image given the user's context. For example, for a full-width banner image, we know we'll need to serve a large version of the image on desktop screens. For mobile, we don't want to serve the same, heavy image. This is where HTML5 `srcset` and `sizes` comes into play. 
 
@@ -247,127 +236,8 @@ With a little work and a solid bridge between designers and developers, we can h
 
 ## Code Linting
 
-To maintain a great reputation in the industry and a strong rapport with customers, our JavaScript should never be shipped with obvious bugs. To keep our code clean and our customers happy, we need to lint our JavaScript. Every time we save our code, Gulp runs a check. If our code passes the lint tests, the upload continues. Otherwise, a helpful error is thrown in the console. The error explains which file and line number the error(s) occurred. Here's the task:
-
-```js
-gulp.task('lint', () => {
-  return gulp.src([paths.scripts,'!node_modules/**'])
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
-});
-```
-
-Notice that `node_modules` is excluded from our linting path. Also purposely absent from the lint is our `lib/js/plugins` directory. We can't control the quality of third-party code (and should be mindful when deciding to use it). We can only control our code, which is why the lint looks only ay the code we write. For a full list of linting rules we enforce, refer to `.eslintrc`, located in the root directory of the project.
-
-## Uploading to Shopify
-
-At the top of our `gulpfile.js`, we store our configuration data which lives in `config.json`.
-
-```js
-const config = require('./config.json');
-```
-
-Now we can use those values when authenticating during our upload request.
-
-```js
-gulp.task('shopifyWatch', () => {
-  const options = { 'basePath': './theme/' };
-
-  return watch([
-    './theme/**',
-    '!./theme/config/settings_data.json',
-    '!./theme/assets/plugins.js'
-    ])
-    .pipe(plumber(plumberErrorHandler))
-    .pipe(gulpShopify(
-      config.api_key,
-      config.api_password,
-      config.url,
-      config.theme_id,
-      options
-    ))
-    .pipe(notify({ message: 'Upload complete' }));
-});
-```
-
-Notice how we exclude `settings_data.json` from the upload. This file should be edited on the server and not overwritten by our local changes.
-
-## Live Reloading Sass
- 
-Shopify code exists on a remote server, which makes live reloading our `sass` changes a bit trickier than opening `localhost:3000` and starting a `node` server. Actually, with Gulp and [Browsersync](https://browsersync.io/docs/gulp), we *can* have this. First, we'll add a new task to our `gulpfile.js`:
-
-```javascript
-gulp.task('server', () => {
-  return browserSync.init({
-    proxy: `https://${config.url}`
-  });
-});
-```
-
-Then, we'll make our `shopifyWatch` task (discussed above) dependent on our `server` task finishing.
-
-```javascript
-gulp.task('shopifyWatch', ['server'], () => { ... });
-```
-
-Our final step is to stream our `sass` changes after the changes are compiled:
-
-```javascript
-gulp.task('styles', () => {
-  return gulp
-    .src(paths.styles)
-    ...
-    .pipe(browserSync.stream())
-    .pipe(notify({message: 'Styles task complete'}));
-});
-```
-
-If everything is working, a new browser tab will open, pointing to `https://localhost:3000/`. If you do not have your `localhost` set up for `https`, you might have to add the current `URL` as an exception or [configure your local environment to run https](https://medium.freecodecamp.org/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec). 
+Making sure
 
 ## Accessibility Auditing
 
-Last, and certainly not least, we must ensure our apps are accessible. Currently, there is no full-proof, automated strategy to catch every possible accessibility violation. However, with the following task, we're going to provide a decent amount of coverage for users. This task should be run manually and frequently throughout the life cycle of the project. Don't leave accessibility last.
-
-```javascript
-gulp.task('accessibility-test', () => {
-  return gulp.src('').pipe(
-    wcagAccess({
-      accessibilityLevel: 'WCAG2AA',
-      maxBuffer: 1048576,
-      force: true,
-      verbose: false,
-      reportLevels: {
-        notice: false,
-        warning: false,
-        error: true
-      },
-      forceUrls: true,
-      urls: [`https://${config.url}`]
-    })
-  );
-});
-```
-
-Running the task...
-
-```
-$ gulp accessibility-test
-Starting 'accessibility-test'...
-```
-
-It completes! 
-
-```
-Generated Report at :  reports/html
-```
-
-The results are generated locally and output in an easy-to-read `HTML` table. 
-
-## Resources
-
-* [ES6 For Beginners](https://codeburst.io/es6-tutorial-for-beginners-5f3c4e7960be)
-* [Understanding SVG Symbols](https://css-tricks.com/svg-symbol-good-choice-icons/)
-* [Accessibility Primer](https://developer.mozilla.org/en-US/docs/Learn/Accessibility/HTML)
-* [Liquid Cheat Sheet](https://www.shopify.com/partners/shopify-cheat-sheet)
-* [Srcset and sizes](https://ericportis.com/posts/2014/srcset-sizes/)
+ADA is a huge issue in the E-Comm world right now. If not properly addressed ADA issues can bring lawsuite that can cost Companies a pile of cash. To check pages for accessability rin the following gulp task `gulp accessibility-test` make sure that the `config.json` file has the url you want to test. The Generated Report will be in `reports/html`.
