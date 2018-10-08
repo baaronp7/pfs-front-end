@@ -236,7 +236,7 @@ With a little work and a solid bridge between designers and developers, we can h
 
 ## Code Linting
 
-Making sure
+We want to ensue that all of our JavaScript follows good coding standards, so we use a jslinter called eslint. Take a look at ".eslintrc" to see all of the lint configurations, If you need to change anythang to match the clients js coding standards that is where you would go.
 
 ## Accessibility Auditing
 
